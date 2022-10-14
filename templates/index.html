@@ -1,0 +1,93 @@
+<!DOCTYPE html>
+<html>
+  <head>
+    <title>{{ gettext("LuDe") }}</title>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1">
+    <meta name="theme-color" content="#000000" />
+
+    <!-- <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/tailwindcss/2.0.2/tailwind.min.css"> -->
+    <script src="https://cdn.tailwindcss.com"></script>
+    <link href="https://fonts.googleapis.com/css?family=Source+Sans+Pro:400,400i,700" rel="stylesheet" />
+
+  </head>
+  <body class="text-cyan-500 bg-black min-h-screen" style="font-family: 'Source Sans Pro', sans-serif">
+
+    <noscript>You need to enable JavaScript to run this app.</noscript>
+
+    <!-- Navbar (sit on top) -->
+    <nav class="bg-gray-900">
+      <div class="container mx-auto px-6 py-2 flex justify-between items-center">
+        <div class="hidden lg:block float-left">
+          <a class="font-bold hover:text-cyan-300 hover:border-teal-500" href="#">
+            {{ gettext("Luminous Decibels") }}
+          </a>
+        </div>
+        <div class="font-italic px-4 py-1 border rounded text-2xl lg:text-4xl text-cyan-300 border-gray-600 items-center" style="letter-spacing:4px;">
+          <span class="headline hover:text-cyan-200">{{ gettext("LuDe") }}</a>
+        </div>
+        <div class="float-right">
+          <ul class="inline-flex">
+            <li><a class="px-4 font-bold" title="Home" href="/">🛖</a></li>
+            <li><a class="px-4 hover:text-gray-300" href="#">{{ gettext("About") }}</a></li>
+          </ul>
+        </div>
+      </div>
+    </nav>
+
+    <div id="form" class="container mx-auto px-6 py-2 flex justify-between items-center" style="min-width: 90%; min-height: 70%;">
+      <div class="relative flex items-center justify-center bg-gray-50 py-6 px-4 sm:px-6 lg:px-8 bg-gray-500 bg-no-repeat bg-cover relative items-center min-w-full min-h-fit"
+          style="background-image: url(/img/bg-image-unsplash-RDxr5k3TUds.jpg);">
+        <div class="absolute bg-black opacity-60 inset-0 z-0"></div>
+        <div class="sm:max-w-lg w-full p-10 bg-white rounded-xl z-10">
+          <div class="text-center">
+            <h2 class="mt-5 text-3xl font-bold text-gray-900">
+              Generate a LuDe!
+            </h2>
+            <p class="mt-2 text-m text-gray-400">Luminous Decibels gives a picture to your words.</p>
+          </div>
+          <form class="mt-8 space-y-3" action="#" method="POST">
+            <div class="grid grid-cols-1 space-y-2">
+              <label class="text-sm font-bold text-gray-500 tracking-wide">Title</label>
+              <input class="text-base p-2 border border-gray-300 rounded-lg focus:outline-none focus:border-indigo-500" type="" placeholder="Words in a Phrase">
+            </div>
+            <div class="grid grid-cols-1 space-y-2">
+              <label class="text-sm font-bold text-gray-500 tracking-wide">Attach Audio <span class="mt-2 text-sm text-gray-400 font-italic">(accepts WAV, MP3)</span></label>
+              <div class="flex items-center justify-center w-full">
+                <label class="flex flex-row rounded-lg border-4 border-dashed w-full h-20 p-10 group items-center">
+                  <div class="h-full w-full text-center flex flex-col items-center justify-center text-center">
+                    <p class="pointer-none text-gray-500 "><span class="text-sm">Drag and drop</span> files here <br /> or <span class="text-blue-600 hover:underline">select a file</span> from your computer</p>
+                  </div>
+                  <img class="h-10 justify-items-end" src="/img/ico-audio-file.svg" alt="audio file">
+                  <input type="file" class="hidden">
+                </label>
+              </div>
+            </div>
+            <div>
+              <button type="submit" class="my-5 w-full flex justify-center bg-blue-500 text-gray-100 p-4  rounded-full tracking-wide font-semibold  focus:outline-none focus:shadow-outline hover:bg-blue-600 shadow-lg cursor-pointer transition ease-in duration-300">Transcribe</button>
+            </div>
+          </form>
+        </div>
+      </div>
+
+      <style>
+        .has-mask {
+          position: absolute;
+          clip: rect(10px, 150px, 130px, 10px);
+        }
+      </style>
+    </div>
+
+    <!-- Page content -->
+    <!-- About Section -->
+    <footer class="bg-black w-full">
+      <div class="container mx-auto w-full">
+        <div class="flex justify-center">
+          <div class="container w-full flex flex-col sm:flex-row justify-between text-center text-m text-cyan-300">
+            <span class="hover:text-cyan-200 w-full">{{ gettext("Description") }}</a>
+          </div>
+        </div>
+      </div>
+    </footer>
+  </body>
+</html>

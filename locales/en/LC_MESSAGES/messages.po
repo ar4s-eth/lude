@@ -1,0 +1,35 @@
+# English translations for PROJECT.
+# Copyright (C) 2022 ORGANIZATION
+# This file is distributed under the same license as the PROJECT project.
+# FIRST AUTHOR <EMAIL@ADDRESS>, 2022.
+#
+msgid ""
+msgstr ""
+"Project-Id-Version: PROJECT VERSION\n"
+"Report-Msgid-Bugs-To: EMAIL@ADDRESS\n"
+"POT-Creation-Date: 2022-10-15 04:20+0530\n"
+"PO-Revision-Date: 2022-10-15 02:03+0530\n"
+"Last-Translator: FULL NAME <EMAIL@ADDRESS>\n"
+"Language: en\n"
+"Language-Team: en <LL@li.org>\n"
+"Plural-Forms: nplurals=2; plural=(n != 1);\n"
+"MIME-Version: 1.0\n"
+"Content-Type: text/plain; charset=utf-8\n"
+"Content-Transfer-Encoding: 8bit\n"
+"Generated-By: Babel 2.10.3\n"
+
+#: templates/index.html:4 templates/index.html:27
+msgid "LuDe"
+msgstr ""
+
+#: templates/index.html:23
+msgid "Luminous Decibels"
+msgstr ""
+
+#: templates/index.html:32
+msgid "About"
+msgstr ""
+
+#: templates/index.html:87
+msgid "Description"
+msgstr "LuDe is an AI powered Video creator that can use an Audio or Text provided for content."
