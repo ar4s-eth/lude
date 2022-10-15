@@ -12,3 +12,4 @@ temp/*
 *.lock
 *.sock
 __pycache__/**
+media/audio/*.*

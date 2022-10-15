@@ -9,9 +9,7 @@ from babel.dates import format_date, format_time
 from babel.numbers import format_decimal
 import logging
 
-logging.basicConfig(
-    format='%(asctime)s [%(levelname)s] %(message)s', level=logging.INFO
-)
+import whisper
 
 
 ##### Globals
@@ -45,6 +43,30 @@ TRANSLATIONS = get_translations(LOCALE_DIR)
 
 
 ##### Funcs & Resources
+
+def load_whisper_model():
+    model = whisper.load_model("base")
+    print("Model Device: %s" % model.device)
+    return model
+
+def transcribe(audio_id):
+    model = WHISPER_MODEL
+    audio_file = os.path.join(AUDIO_PATH, audio_id)
+    audio = whisper.load_audio(audio_file)
+    audio = whisper.pad_or_trim(audio)  ## this trims audio to 1min, on local machine the run panics otherwise
+
+    # make log-Mel spectrogram and move to the same device as the model
+    mel = whisper.log_mel_spectrogram(audio).to(model.device)
+
+    # detect the spoken language
+    _, probs = model.detect_language(mel)
+    print(f"Detected language: {max(probs, key=probs.get)}")
+
+    # decode the audio
+    options = whisper.DecodingOptions(fp16=False)
+    result = whisper.decode(model, mel, options)
+    return result.text
+
 
 def get_template_locale(locale_dir):
     tmpl = jinja2.Environment(
@@ -120,6 +142,23 @@ async def upload_audio(req, name, audio_id):
     return audio_id
 
 
+class APITranscribeResource:
+    async def on_get(self, req, resp, audio_id):
+        try:
+            transcription = transcribe(audio_id)
+        except Exception as e:
+            print(e)
+            raise falcon.HTTPInternalServerError(
+              success=False,
+              error="Failed to transcribe audio",
+              description="An issue occurred while transcribing the Audio."
+            )
+        resp.status = falcon.HTTP_200
+        resp.content_type = 'application/json'
+        resp.text = json.dumps({'success': True, 'text': transcription})
+        return
+
+
 class APIAudioResource:
     async def on_get(self, req, resp):
         resp.status = falcon.HTTP_400
@@ -129,16 +168,6 @@ class APIAudioResource:
 
     async def on_post(self, req, resp):
         audio_id = "default_filename" # str(uuid.uuid4())
-        #try:
-        #    #audio_body = req.get_param('file')
-        #    #raw = audio_body.file.read()
-        #except Exception as e:
-        #    print(e)
-        #    raise falcon.HTTPBadRequest(
-        #      success=False,
-        #      error="Failed to upload audio",
-        #      description="There is a bad request for uploading the Audio."
-        #    )
         try:
             audio_id = await upload_audio(req, 'file', audio_id)
         except Exception as e:
@@ -160,12 +189,20 @@ class RedirectResource:
 
 #### __main__
 
+logging.basicConfig(
+    format='%(asctime)s [%(levelname)s] %(message)s', level=logging.INFO
+)
+
+WHISPER_MODEL = load_whisper_model()
+
 mainHandler = MainResource()
 apiAudioHandler = APIAudioResource()
+apiTranscribeHandler = APITranscribeResource()
 redirect = RedirectResource()
 
 app = falcon.asgi.App()
 app.add_static_route('/img', IMAGE_PATH)
 app.add_route('/{locale}/main', mainHandler)
 app.add_route('/api/audio', apiAudioHandler)
+app.add_route('/api/transcribe/{audio_id}', apiTranscribeHandler)
 app.add_route('/', redirect)

@@ -159,6 +159,21 @@ let audioFile = "";
 const audioSubmit = document.querySelector("#audio-submit");
 const audioInput = document.querySelector("#audio-input");
 const audioInputMsg = document.querySelector("#audio-input-msg");
+const transcriptionTextArea = document.querySelector("#xscript");
+
+const transcribeAudio = (audio_id) => {
+  console.log("Transcribe audio...");
+  const API_ENDPOINT = "/api/transcribe/" + audio_id ;
+  fetch(API_ENDPOINT)
+  .then((response) => response.json())
+  .then((data) => {
+      console.log(data);
+      const result = data.text;
+      console.log(result);
+      transcriptionTextArea.value = result;
+  })
+  .catch(console.error);
+}
 
 const uploadFile = file => {
   console.log("Uploading file...");
@@ -168,9 +183,14 @@ const uploadFile = file => {
 
   request.open("POST", API_ENDPOINT, true);
   request.onreadystatechange = () => {
-    //if (request.readyState === 4 && request.status === 200) {
+    if (request.readyState === 4 && request.status === 200) {
       console.log(request.responseText);
-    //}
+      const result = JSON.parse(request.responseText)
+      console.log(result.audio_id)
+      transcribeAudio(result.audio_id)
+    } else {
+      console.log(request.responseText);
+    }
   };
   formData.append("file", file);
   request.send(formData);
@@ -187,42 +207,6 @@ audioInput.addEventListener("change", event => {
 audioSubmit.addEventListener("click", event => {
   uploadFile(audioFile);
 });
-/*
-        let myDropzone = new Dropzone("div#audio", {
-          url: "/api/audio",
-          method: "post",
-          paramName: "file",
-          maxFiles: 1,
-          maxFilesize: 10485760,
-          clickable: true,
-          timeout: 5000
-        }); // allowing 10MB max, 5millisec timeout
-
-        Dropzone.options.myDropzone = {
-            paramName: "file", // The name that will be used to transfer the file
-            init: function () {
-                thisDropzone = this;
-                this.element.querySelector("div#audio").addEventListener("click", function(e) {
-                  e.preventDefault();
-                  e.stopPropagation();
-                  thisDropzone.processQueue();
-                });
-
-                $.get('/api/audio', function (data) {
-                    if (data == null) {
-                        return;
-                    }
-                    $.each(data, function (key, value) {
-                        var audioFile = { name: value.name, size: value.size };
-                        thisDropzone.emit("addedfile", audioFile);
-                        // Make sure that there is no progress bar, etc...
-                        thisDropzone.emit("complete", audioFile);
-                    });
-
-                });
-            }
-        };
-*/
       </script> 
     </div>
 
