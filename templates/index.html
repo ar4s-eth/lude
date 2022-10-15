@@ -10,6 +10,11 @@
     <script src="https://cdn.tailwindcss.com"></script>
     <link href="https://fonts.googleapis.com/css?family=Source+Sans+Pro:400,400i,700" rel="stylesheet" />
 
+    <script src="https://code.jquery.com/jquery-3.6.1.slim.min.js"></script>
+    <link href="https://fonts.googleapis.com/css?family=Source+Sans+Pro:400,400i,700" rel="stylesheet" />
+    <script src="https://unpkg.com/dropzone@5/dist/min/dropzone.min.js"></script>
+    <link rel="stylesheet" href="https://unpkg.com/dropzone@5/dist/min/dropzone.min.css" type="text/css" />
+
   </head>
   <body class="text-cyan-500 bg-black min-h-screen" style="font-family: 'Source Sans Pro', sans-serif">
 
@@ -35,38 +40,111 @@
       </div>
     </nav>
 
-    <div id="form" class="container mx-auto px-6 py-2 flex justify-between items-center" style="min-width: 90%; min-height: 70%;">
+    <div id="multistepform" class="container mx-auto px-6 py-2 flex justify-between items-center" style="min-width: 90%; min-height: 70%;">
       <div class="relative flex items-center justify-center bg-gray-50 py-6 px-4 sm:px-6 lg:px-8 bg-gray-500 bg-no-repeat bg-cover relative items-center min-w-full min-h-fit"
           style="background-image: url(/img/bg-image-unsplash-RDxr5k3TUds.jpg);">
+
+        <div class="mt-8">
+          <h2 class="mb-4 text-2xl font-bold text-center text-gray-800 lg:text-3xl md:mb-6">Generate a LuDe!</h2>
+          <p class="max-w-screen-md mx-auto text-center text-gray-500 md:text-lg">
+            Luminous Decibels gives a picture to your words.
+          </p>
+        </div>
+
         <div class="absolute bg-black opacity-60 inset-0 z-0"></div>
         <div class="sm:max-w-lg w-full p-10 bg-white rounded-xl z-10">
           <div class="text-center">
-            <h2 class="mt-5 text-3xl font-bold text-gray-900">
-              Generate a LuDe!
-            </h2>
-            <p class="mt-2 text-m text-gray-400">Luminous Decibels gives a picture to your words.</p>
-          </div>
-          <form class="mt-8 space-y-3" action="#" method="POST">
-            <div class="grid grid-cols-1 space-y-2">
-              <label class="text-sm font-bold text-gray-500 tracking-wide">Title</label>
-              <input class="text-base p-2 border border-gray-300 rounded-lg focus:outline-none focus:border-indigo-500" type="" placeholder="Words in a Phrase">
-            </div>
-            <div class="grid grid-cols-1 space-y-2">
-              <label class="text-sm font-bold text-gray-500 tracking-wide">Attach Audio <span class="mt-2 text-sm text-gray-400 font-italic">(accepts WAV, MP3)</span></label>
-              <div class="flex items-center justify-center w-full">
-                <label class="flex flex-row rounded-lg border-4 border-dashed w-full h-20 p-10 group items-center">
-                  <div class="h-full w-full text-center flex flex-col items-center justify-center text-center">
-                    <p class="pointer-none text-gray-500 "><span class="text-sm">Drag and drop</span> files here <br /> or <span class="text-blue-600 hover:underline">select a file</span> from your computer</p>
+            <!-- multi form - start -->
+            <div class="text-gray-600">
+              <div class="container flex flex-col flex-wrap px-5 py-4 mx-auto">
+                <div class="flex flex-wrap mx-auto">
+                  <a class="inline-flex items-center justify-center w-1/2 py-3 font-medium leading-none tracking-wider text-indigo-500 bg-gray-100 border-b-2 border-indigo-500 rounded-t sm:px-6 sm:w-auto sm:justify-start title-font">
+                    decibels
+                  </a>
+                  <a class="inline-flex items-center justify-center w-1/2 py-3 font-medium leading-none tracking-wider text-indigo-500 bg-gray-100 border-b-2 border-indigo-500 rounded-t sm:px-6 sm:w-auto sm:justify-start title-font">
+                    ~x~
+                  </a>
+                  <a class="inline-flex items-center justify-center w-1/2 py-3 font-medium leading-none tracking-wider text-indigo-500 bg-gray-100 border-b-2 border-indigo-500 rounded-t sm:px-6 sm:w-auto sm:justify-start title-font">
+                    luminous
+                  </a>
+                </div>
+                <div class="flex flex-col w-full text-center">
+                  <div class="py-6 bg-white sm:py-8 lg:py-12">
+                    <div class="px-4 mx-auto max-w-screen-2xl md:px-8">
+                      <!-- form - start -->
+                      <div class="max-w-screen-md mx-auto">
+                        <div id="form-1">
+                          <div class="grid grid-cols-1 space-y-2">
+                            <label class="text-sm font-bold text-gray-500 tracking-wide">Title</label>
+                            <input class="text-base p-2 border border-gray-300 rounded-lg focus:outline-none focus:border-indigo-500" type="" placeholder="Words in a Phrase">
+                          </div>
+                          <div class="grid grid-cols-1 space-y-2">
+                            <label class="text-sm font-bold text-gray-500 tracking-wide">Attach Audio <span class="mt-2 text-sm text-gray-400 font-italic">(accepts WAV, MP3)</span></label>
+                            <div id="audio" class="flex items-center justify-center w-full">
+                              <label class="flex flex-row rounded-lg border-4 border-dashed w-full h-20 p-10 group items-center">
+                                <div class="h-full w-full text-center flex flex-col items-center justify-center text-center">
+                                  <p id="audio-input-msg" class="pointer-none text-gray-500 "><span class="text-sm">Drag and drop</span> files here <br /> or <span class="text-blue-600 hover:underline">select a file</span> from your computer</p>
+                                </div>
+                                <img class="h-10 justify-items-end" src="/img/ico-audio-file.svg" alt="audio file">
+                                <input id="audio-input" type="file" class="hidden">
+                              </label>
+                            </div>
+                          </div>
+                          <div>
+                            <div id="audio-submit" class="my-5 w-full flex justify-center bg-blue-500 text-gray-100 p-4 rounded-full tracking-wide font-semibold  focus:outline-none focus:shadow-outline hover:bg-blue-600 shadow-lg cursor-pointer transition ease-in duration-300">Transcribe</div>
+                          </div>
+                        </div>
+
+                        <div id="form-2">
+                          <div class="grid grid-cols-1 space-y-2">
+                            <label id="title-2" class="text-sm font-bold text-gray-500 tracking-wide"></label>
+                          </div>
+                          <div class="grid grid-cols-1 space-y-2">
+                            <label class="text-sm font-bold text-gray-500 tracking-wide">Script <span class="mt-2 text-sm text-gray-400 font-italic">(edit it to your need)</span></label>
+                            <div class="flex items-center justify-center w-full">
+                              <textarea id="xscript" rows="10" class="block p-2.5 w-full text-sm text-gray-900 bg-gray-50 rounded-lg border border-gray-300 focus:ring-blue-500 focus:border-blue-500 dark:bg-gray-700 dark:border-gray-600 dark:placeholder-gray-400 dark:text-white dark:focus:ring-blue-500 dark:focus:border-blue-500" placeholder="Once upon a time...">
+                              </textarea>
+                            </div>
+                          </div>
+                          <div>
+                            <div type="submit" class="my-5 w-full flex justify-center bg-blue-500 text-gray-100 p-4 rounded-full tracking-wide font-semibold  focus:outline-none focus:shadow-outline hover:bg-blue-600 shadow-lg cursor-pointer transition ease-in duration-300">Luminate</div>
+                          </div>
+                        </div>
+
+                        <div id="form-3">
+                          <div class="grid grid-cols-1 space-y-2">
+                            <label id="title-2" class="text-sm font-bold text-gray-500 tracking-wide"></label>
+                          </div>
+                          <div class="grid grid-cols-1 space-y-2">
+                            <label class="text-sm font-bold text-gray-500 tracking-wide">Video</label>
+                            <div class="flex items-center justify-center w-full">
+                              <video controls width="250">
+                                <source src="" type="video/mp4">
+                              </video>
+                            </div>
+                          </div>
+                          <div>
+                            <a href="/media/output/video0.mp4"><div type="submit" class="my-5 w-full flex justify-center bg-blue-500 text-gray-100 p-4 rounded-full tracking-wide font-semibold  focus:outline-none focus:shadow-outline hover:bg-blue-600 shadow-lg cursor-pointer transition ease-in duration-300">Download</div></a>
+                          </div>
+                        </div>
+
+                        <div class="flex items-center justify-between">
+                          <button class="inline-flex items-center px-6 py-2 text-sm text-gray-800 rounded-lg shadow outline-none gap-x-1 hover:bg-gray-100">
+                            <svg xmlns="http://www.w3.org/2000/svg" class="w-4 h-4" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+                              <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M10 19l-7-7m0 0l7-7m-7 7h18"/>
+                            </svg>Back
+                          </button>
+                          <button class="px-6 py-2 text-sm text-white bg-indigo-500 rounded-lg outline-none hover:bg-indigo-600 ring-indigo-300">Next</button>
+                        </div>
+                      </div>
+                      <!-- form - end -->
+                    </div>
                   </div>
-                  <img class="h-10 justify-items-end" src="/img/ico-audio-file.svg" alt="audio file">
-                  <input type="file" class="hidden">
-                </label>
+                </div>
               </div>
             </div>
-            <div>
-              <button type="submit" class="my-5 w-full flex justify-center bg-blue-500 text-gray-100 p-4  rounded-full tracking-wide font-semibold  focus:outline-none focus:shadow-outline hover:bg-blue-600 shadow-lg cursor-pointer transition ease-in duration-300">Transcribe</button>
-            </div>
-          </form>
+            <!-- multi form - end -->
+          </div>
         </div>
       </div>
 
@@ -76,6 +154,76 @@
           clip: rect(10px, 150px, 130px, 10px);
         }
       </style>
+      <script type="text/javascript">
+let audioFile = "";
+const audioSubmit = document.querySelector("#audio-submit");
+const audioInput = document.querySelector("#audio-input");
+const audioInputMsg = document.querySelector("#audio-input-msg");
+
+const uploadFile = file => {
+  console.log("Uploading file...");
+  const API_ENDPOINT = "/api/audio";
+  const request = new XMLHttpRequest();
+  const formData = new FormData();
+
+  request.open("POST", API_ENDPOINT, true);
+  request.onreadystatechange = () => {
+    //if (request.readyState === 4 && request.status === 200) {
+      console.log(request.responseText);
+    //}
+  };
+  formData.append("file", file);
+  request.send(formData);
+};
+
+audioInput.addEventListener("change", event => {
+  const files = event.target.files;
+  audioFile = files[0];
+  audioInputMsg.innerHTML = `
+    <div>` + audioFile.name + ` </div>
+  `;
+});
+
+audioSubmit.addEventListener("click", event => {
+  uploadFile(audioFile);
+});
+/*
+        let myDropzone = new Dropzone("div#audio", {
+          url: "/api/audio",
+          method: "post",
+          paramName: "file",
+          maxFiles: 1,
+          maxFilesize: 10485760,
+          clickable: true,
+          timeout: 5000
+        }); // allowing 10MB max, 5millisec timeout
+
+        Dropzone.options.myDropzone = {
+            paramName: "file", // The name that will be used to transfer the file
+            init: function () {
+                thisDropzone = this;
+                this.element.querySelector("div#audio").addEventListener("click", function(e) {
+                  e.preventDefault();
+                  e.stopPropagation();
+                  thisDropzone.processQueue();
+                });
+
+                $.get('/api/audio', function (data) {
+                    if (data == null) {
+                        return;
+                    }
+                    $.each(data, function (key, value) {
+                        var audioFile = { name: value.name, size: value.size };
+                        thisDropzone.emit("addedfile", audioFile);
+                        // Make sure that there is no progress bar, etc...
+                        thisDropzone.emit("complete", audioFile);
+                    });
+
+                });
+            }
+        };
+*/
+      </script> 
     </div>
 
     <!-- Page content -->
