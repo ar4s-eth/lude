@@ -16,10 +16,12 @@ import pylude  ## local relative import
 print("pyLuDe activated version: %s" % pylude.__VERSION__)
 
 ##### Globals
-STATIC_PATH = os.path.join(os.getcwd(), 'static')
+ABSOLUTE_ROOT_PATH = os.getcwd()
+
+STATIC_PATH = os.path.join(ABSOLUTE_ROOT_PATH, 'static')
 IMAGE_PATH  = os.path.join(STATIC_PATH, 'img')
 
-MEDIA_PATH = os.path.join(os.getcwd(), 'media')
+MEDIA_PATH = os.path.join(ABSOLUTE_ROOT_PATH, 'media')
 AUDIO_PATH = os.path.join(MEDIA_PATH, 'audio')
 TEXT_PATH = os.path.join(MEDIA_PATH, 'text')
 FRAMEDATA_PATH = os.path.join(MEDIA_PATH, 'framedata')
@@ -46,6 +48,10 @@ def get_translations(locale_dir):
         )
     return translations
 TRANSLATIONS = get_translations(LOCALE_DIR)
+
+
+def trim_path(absolute_path, trim_path):
+    return absolute_path.replace(trim_path, "")
 
 
 ##### Funcs & Resources
@@ -202,11 +208,17 @@ class APIVideoResource:
         return
 
     async def on_post(self, req, resp, audio_id):
+        my_video_file = os.path.join(VIDEO_PATH, audio_id)
         try:
             script_filepath = os.path.join(TEXT_PATH, audio_id)
             framedata_file = pylude.generate_framedata(script_filepath, FRAMEDATA_PATH)
+
             my_frames_dir = os.path.join(FRAMES_PATH, audio_id)
-            pylude.generate_frames(framedata_file, my_frames_dir, FONTS_PATH)
+            frame_specs = pylude.generate_frames(framedata_file, my_frames_dir, FONTS_PATH)
+
+            video_fps = frame_specs['fps']
+            my_video_file = os.path.splitext(my_video_file)[0] + ".mp4"
+            pylude.generate_video(my_frames_dir, my_video_file, video_fps)
         except Exception as e:
             print(e)
             raise falcon.HTTPInternalServerError(
@@ -214,9 +226,18 @@ class APIVideoResource:
               error="Failed to generate video",
               description="An issue occurred while generating the video."
             )
+        if not os.path.isfile(my_video_file):
+            raise falcon.HTTPInternalServerError(
+                success=False,
+                error="Failed to generate video",
+                description="The process completed but no video file can be located."
+            )
         resp.status = falcon.HTTP_200
         resp.content_type = 'application/json'
-        resp.text = json.dumps({'success': True, 'video_link': 'WIP'})
+        resp.text = json.dumps({
+            'success': True,
+            'video_link': trim_path(my_video_file, MEDIA_PATH),
+        })
 
 
 class APIAudioResource:
@@ -276,6 +297,7 @@ extra_handlers = {
 app = falcon.asgi.App()
 app.req_options.media_handlers.update(extra_handlers)
 app.add_static_route('/img', IMAGE_PATH)
+app.add_static_route('/video', VIDEO_PATH)
 app.add_route('/{locale}/main', mainHandler)
 app.add_route('/api/audio', apiAudioHandler)
 app.add_route('/api/transcribe/{audio_id}', apiTranscribeHandler)

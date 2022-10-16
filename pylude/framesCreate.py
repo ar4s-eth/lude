@@ -111,10 +111,6 @@ def do_generate_frames(framedata_file, frames_dir, frame_specs):
 
 
     def draw_next_word(canvas, last_line, shabda, x_coordinates, font, color):
-        print("last line: %s" % (last_line))
-        print("shabda: %s" % (shabda))
-        print("x: %s" % str(x_coordinates))
-        print("----------------------------")
         draw = ImageDraw.Draw(canvas)
         draw.text(
             x_coordinates,
@@ -188,7 +184,6 @@ def do_generate_frames(framedata_file, frames_dir, frame_specs):
 
         for line in lines_already_read:
             y_text = draw_read_line(canvas, line, y_text, font)
-            print("~", line)
 
         y_text = draw_read_line(canvas, line_currently_read, y_text, font, shabda_width)
 
@@ -241,7 +236,7 @@ def do_generate_frames(framedata_file, frames_dir, frame_specs):
                 print("%s\t'%s'" % (pause_x, frame_lyric))
                 create_frame_image(line_count, pause_x, frame_lyric, shabda, default_font)
                 line_count += 1
-            print('Processed %d lines.' % (line_count))
+            print('Processed %d lines for %s.' % (line_count, frame_data_file))
 
     ## calling this internal structure scoped structure
     FRAME_SPECS = frame_specs
@@ -315,3 +310,4 @@ def generate_frames(framedata_file, frames_dir, fonts_dir, frame_specs=DEFAULT_F
     frame_specs['fps'] = DEFAULT_FRAMES_PER_SECOND
     frame_specs['base_image_file'] = DEFAULT_BASE_IMAGE_PATH
     do_generate_frames(framedata_file, frames_dir, frame_specs)
+    return frame_specs

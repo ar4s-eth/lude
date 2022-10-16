@@ -117,14 +117,11 @@
                           </div>
                           <div class="grid grid-cols-1 space-y-2">
                             <label class="text-sm font-bold text-gray-500 tracking-wide">Video</label>
-                            <div class="flex items-center justify-center w-full">
-                              <video controls width="250">
-                                <source src="" type="video/mp4">
-                              </video>
+                            <div id="luminous-result" class="flex items-center justify-center w-full">
                             </div>
                           </div>
                           <div>
-                            <a href="/media/output/video0.mp4"><div type="submit" class="my-5 w-full flex justify-center bg-blue-500 text-gray-100 p-4 rounded-full tracking-wide font-semibold  focus:outline-none focus:shadow-outline hover:bg-blue-600 shadow-lg cursor-pointer transition ease-in duration-300">Download</div></a>
+                            <a id="luminous-download" href="/media/output/video0.mp4"><div type="submit" class="my-5 w-full flex justify-center bg-blue-500 text-gray-100 p-4 rounded-full tracking-wide font-semibold  focus:outline-none focus:shadow-outline hover:bg-blue-600 shadow-lg cursor-pointer transition ease-in duration-300">Download</div></a>
                           </div>
                         </div>
 
@@ -162,6 +159,8 @@ const audioInput = document.querySelector("#audio-input");
 const audioInputMsg = document.querySelector("#audio-input-msg");
 const scriptSubmit = document.querySelector("#script-submit");
 const transcriptionTextArea = document.querySelector("#xscript");
+const luminousResult = document.querySelector("#luminous-result");
+const luminousDownload = document.querySelector("#luminous-download");
 
 const setAudioID = (audio_id) => {
   if (audioID != "" && audioID != audio_id) {
@@ -240,6 +239,10 @@ const generateVideo = audio_id => {
   .then((response) => response.json())
   .then((data) => {
       console.log(data);
+      luminousDownload.href = data.video_link;
+      luminousResult.innerHTML = '<video id="luminous-video" controls width="250">' +
+                                   '<source id="luminous-source" src="' + data.video_link + '" type="video/mp4">' +
+                                 '</video>';
   })
   .catch(console.error);
 };
