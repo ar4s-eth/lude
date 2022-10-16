@@ -17,6 +17,7 @@ print("pyLuDe activated version: %s" % pylude.__VERSION__)
 
 ##### Globals
 ABSOLUTE_ROOT_PATH = os.getcwd()
+TEMP_PATH = os.path.join(ABSOLUTE_ROOT_PATH, 'temp')
 
 STATIC_PATH = os.path.join(ABSOLUTE_ROOT_PATH, 'static')
 IMAGE_PATH  = os.path.join(STATIC_PATH, 'img')
@@ -208,7 +209,13 @@ class APIVideoResource:
         return
 
     async def on_post(self, req, resp, audio_id):
+        recreate = True ##ABK False
+        for key, value in req.params.items():
+            if key == 'recreate':
+                recreate = value
+        description = "Generate lyrical video from transcript & attached audio."
         my_video_file = os.path.join(VIDEO_PATH, audio_id)
+        my_video_file = os.path.splitext(my_video_file)[0] + ".mp4"
         try:
             script_filepath = os.path.join(TEXT_PATH, audio_id)
             framedata_file = pylude.generate_framedata(script_filepath, FRAMEDATA_PATH)
@@ -217,8 +224,19 @@ class APIVideoResource:
             frame_specs = pylude.generate_frames(framedata_file, my_frames_dir, FONTS_PATH)
 
             video_fps = frame_specs['fps']
-            my_video_file = os.path.splitext(my_video_file)[0] + ".mp4"
-            pylude.generate_video(my_frames_dir, my_video_file, video_fps)
+            vdo_tmp = os.path.join(TEMP_PATH, audio_id)
+            vdo_tmp = os.path.splitext(vdo_tmp)[0] + ".mp4"
+            if os.path.isfile(vdo_tmp) and recreate:
+                print("removing file: %s" % vdo_tmp)
+                os.remove(vdo_tmp)
+            pylude.generate_video(my_frames_dir, vdo_tmp, video_fps)
+
+            my_audio_file = os.path.join(AUDIO_PATH, audio_id)
+            if os.path.isfile(my_video_file) and recreate:
+                print("removing file: %s" % my_video_file)
+                os.remove(my_video_file)
+            if not pylude.attach_audio(vdo_tmp, my_audio_file, my_video_file):
+                description = "Failed to attach audio."
         except Exception as e:
             print(e)
             raise falcon.HTTPInternalServerError(
@@ -237,6 +255,7 @@ class APIVideoResource:
         resp.text = json.dumps({
             'success': True,
             'video_link': trim_path(my_video_file, MEDIA_PATH),
+            'description': description,
         })
 
 

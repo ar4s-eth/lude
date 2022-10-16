@@ -5,6 +5,7 @@ import cv2
 import re
 import sys
 from PIL import Image
+import ffmpeg
 
 
 def atoi(text):
@@ -77,6 +78,8 @@ def do_generate_video(frames_dir, list_of_frames, video_spec):
 
 
 def generate_video(frames_dir, video_file, video_fps):
+    if os.path.isfile(video_file):
+        return
     all_frames = listframes(frames_dir)
     if all_frames == None or len(all_frames) == 0:
         print("found no frames at %s" % (frames_dir))
@@ -90,3 +93,18 @@ def generate_video(frames_dir, video_file, video_fps):
         'frame-repeat-count': 48,
     }
     do_generate_video(frames_dir, all_frames, video_spec)
+
+
+def attach_audio(video_file, audio_file, output_file):
+    print("attach %s with %s to generate %s" % (video_file, audio_file, output_file))
+    if os.path.isfile(output_file):
+        return
+    try:
+        ff_video = ffmpeg.input(video_file)
+        ff_audio = ffmpeg.input(audio_file)
+        stream = ffmpeg.concat(ff_video, ff_audio, v=1, a=1).output(output_file)
+        stream.run(overwrite_output=True)
+        return True
+    except Exception as e:
+        print(e)
+        return False

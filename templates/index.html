@@ -117,8 +117,8 @@
                           </div>
                           <div class="grid grid-cols-1 space-y-2">
                             <label class="text-sm font-bold text-gray-500 tracking-wide">Video</label>
-                            <div id="luminous-result" class="flex items-center justify-center w-full">
-                            </div>
+                            <div id="luminous-result" class="flex items-center justify-center w-full"></div>
+                            <div id="luminous-state" class="flex items-center justify-center px-6"></div>
                           </div>
                           <div>
                             <a id="luminous-download" href="/media/output/video0.mp4"><div type="submit" class="my-5 w-full flex justify-center bg-blue-500 text-gray-100 p-4 rounded-full tracking-wide font-semibold  focus:outline-none focus:shadow-outline hover:bg-blue-600 shadow-lg cursor-pointer transition ease-in duration-300">Download</div></a>
@@ -160,6 +160,7 @@ const audioInputMsg = document.querySelector("#audio-input-msg");
 const scriptSubmit = document.querySelector("#script-submit");
 const transcriptionTextArea = document.querySelector("#xscript");
 const luminousResult = document.querySelector("#luminous-result");
+const luminousState = document.querySelector("#luminous-state");
 const luminousDownload = document.querySelector("#luminous-download");
 
 const setAudioID = (audio_id) => {
@@ -228,6 +229,7 @@ const updateScript = (audio_id, transcript) => {
 };
 
 const generateVideo = audio_id => {
+  luminousState.innerHTML = 'Generating your Luminous Decibels.<br/>This takes some time with our current server power.'
   const API_ENDPOINT = "/api/video/" + audio_id ;
   fetch(API_ENDPOINT, {
     method: 'POST',
@@ -242,9 +244,13 @@ const generateVideo = audio_id => {
       luminousDownload.href = data.video_link;
       luminousResult.innerHTML = '<video id="luminous-video" controls width="250">' +
                                    '<source id="luminous-source" src="' + data.video_link + '" type="video/mp4">' +
-                                 '</video>';
+                                 'Video tag not supported.</video>';
+      luminousState.innerHTML = 'Ready to play or download!'
   })
-  .catch(console.error);
+  .catch((err) => {
+    console.error(err);
+    luminousState.innerHTML = 'We are facing some issues at the moment. Please retry in a while.'
+  });
 };
 
 audioInput.addEventListener("change", event => {
@@ -263,7 +269,7 @@ scriptSubmit.addEventListener("click", event => {
   updateScript(audioID, transcriptionTextArea.value);
   generateVideo(audioID);
 });
-      </script> 
+      </script>
     </div>
 
     <!-- Page content -->
