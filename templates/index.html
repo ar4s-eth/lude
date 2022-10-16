@@ -118,7 +118,7 @@
                           <div class="grid grid-cols-1 space-y-2">
                             <label class="text-sm font-bold text-gray-500 tracking-wide">Video</label>
                             <div id="luminous-result" class="flex items-center justify-center w-full"></div>
-                            <div id="luminous-state" class="flex items-center justify-center px-6"></div>
+                            <div id="luminous-state" class="flex items-center justify-center px-6">You still need to Luminate, before your LuDe is created.</div>
                           </div>
                           <div>
                             <a id="luminous-download" href="/media/output/video0.mp4"><div type="submit" class="my-5 w-full flex justify-center bg-blue-500 text-gray-100 p-4 rounded-full tracking-wide font-semibold  focus:outline-none focus:shadow-outline hover:bg-blue-600 shadow-lg cursor-pointer transition ease-in duration-300">Download</div></a>
@@ -230,7 +230,7 @@ const updateScript = (audio_id, transcript) => {
 
 const generateVideo = audio_id => {
   luminousState.innerHTML = 'Generating your Luminous Decibels.<br/>This takes some time with our current server power.'
-  const API_ENDPOINT = "/api/video/" + audio_id ;
+  const API_ENDPOINT = "/api/video/" + audio_id + '?' + new URLSearchParams({recreate: true});
   fetch(API_ENDPOINT, {
     method: 'POST',
     cache: 'no-cache',
@@ -242,9 +242,9 @@ const generateVideo = audio_id => {
   .then((data) => {
       console.log(data);
       luminousDownload.href = data.video_link;
-      luminousResult.innerHTML = '<video id="luminous-video" controls width="250">' +
+      luminousResult.innerHTML = '<video id="luminous-video" controls width="250px" height="445px">' +
                                    '<source id="luminous-source" src="' + data.video_link + '" type="video/mp4">' +
-                                 'Video tag not supported.</video>';
+                                 '<p>Video tag not supported.</p></video>';
       luminousState.innerHTML = 'Ready to play or download!'
   })
   .catch((err) => {

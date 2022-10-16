@@ -209,7 +209,7 @@ class APIVideoResource:
         return
 
     async def on_post(self, req, resp, audio_id):
-        recreate = True ##ABK False
+        recreate = False
         for key, value in req.params.items():
             if key == 'recreate':
                 recreate = value
@@ -221,7 +221,8 @@ class APIVideoResource:
             framedata_file = pylude.generate_framedata(script_filepath, FRAMEDATA_PATH)
 
             my_frames_dir = os.path.join(FRAMES_PATH, audio_id)
-            frame_specs = pylude.generate_frames(framedata_file, my_frames_dir, FONTS_PATH)
+            frame_specs = {'width': 1080, 'height': 1920}
+            frame_specs = pylude.generate_frames(framedata_file, my_frames_dir, FONTS_PATH, frame_specs)
 
             video_fps = frame_specs['fps']
             vdo_tmp = os.path.join(TEMP_PATH, audio_id)

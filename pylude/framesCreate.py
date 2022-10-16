@@ -306,8 +306,14 @@ DEFAULT_BASE_IMAGE_PATH = base_image_path(os.path.join(LVG_DATA_DIR, 'bgimages')
 
 def generate_frames(framedata_file, frames_dir, fonts_dir, frame_specs=DEFAULT_FRAME_SPECS):
     DEFAULT_FONT_PATH = os.path.join(fonts_dir, DEFAULT_FONT_FILE)
-    frame_specs['font_path'] = DEFAULT_FONT_PATH
-    frame_specs['fps'] = DEFAULT_FRAMES_PER_SECOND
-    frame_specs['base_image_file'] = DEFAULT_BASE_IMAGE_PATH
+    for default_key, default_val in DEFAULT_FRAME_SPECS.items():
+        if default_key not in frame_specs.keys():
+            frame_specs[default_key] = default_val
+    if 'font_path' not in frame_specs.keys():
+        frame_specs['font_path'] = DEFAULT_FONT_PATH
+    if 'fps' not in frame_specs.keys():
+        frame_specs['fps'] = DEFAULT_FRAMES_PER_SECOND
+    if 'base_image_file' not in frame_specs.keys():
+        frame_specs['base_image_file'] = DEFAULT_BASE_IMAGE_PATH
     do_generate_frames(framedata_file, frames_dir, frame_specs)
     return frame_specs
