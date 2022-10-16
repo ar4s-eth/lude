@@ -58,13 +58,13 @@
             <div class="text-gray-600">
               <div class="container flex flex-col flex-wrap px-5 py-4 mx-auto">
                 <div class="flex flex-wrap mx-auto">
-                  <a class="inline-flex items-center justify-center w-1/2 py-3 font-medium leading-none tracking-wider text-indigo-500 bg-gray-100 border-b-2 border-indigo-500 rounded-t sm:px-6 sm:w-auto sm:justify-start title-font">
+                  <a id="form-1-head" class="inline-flex items-center justify-center w-1/2 py-3 font-medium leading-none tracking-wider text-indigo-500 bg-gray-100 border-b-2 border-indigo-500 rounded-t sm:px-6 sm:w-auto sm:justify-start title-font">
                     decibels
                   </a>
-                  <a class="inline-flex items-center justify-center w-1/2 py-3 font-medium leading-none tracking-wider text-indigo-500 bg-gray-100 border-b-2 border-indigo-500 rounded-t sm:px-6 sm:w-auto sm:justify-start title-font">
+                  <a id="form-2-head" class="inline-flex items-center justify-center w-1/2 py-3 font-medium leading-none tracking-wider text-indigo-500 bg-gray-100 border-b-2 border-indigo-500 rounded-t sm:px-6 sm:w-auto sm:justify-start title-font">
                     ~x~
                   </a>
-                  <a class="inline-flex items-center justify-center w-1/2 py-3 font-medium leading-none tracking-wider text-indigo-500 bg-gray-100 border-b-2 border-indigo-500 rounded-t sm:px-6 sm:w-auto sm:justify-start title-font">
+                  <a id="form-3-head" class="inline-flex items-center justify-center w-1/2 py-3 font-medium leading-none tracking-wider text-indigo-500 bg-gray-100 border-b-2 border-indigo-500 rounded-t sm:px-6 sm:w-auto sm:justify-start title-font">
                     luminous
                   </a>
                 </div>
@@ -74,10 +74,12 @@
                       <!-- form - start -->
                       <div class="max-w-screen-md mx-auto">
                         <div id="form-1">
+                          <!--
                           <div class="grid grid-cols-1 space-y-2">
                             <label class="text-sm font-bold text-gray-500 tracking-wide">Title</label>
                             <input class="text-base p-2 border border-gray-300 rounded-lg focus:outline-none focus:border-indigo-500" type="" placeholder="Words in a Phrase">
                           </div>
+                          -->
                           <div class="grid grid-cols-1 space-y-2">
                             <label class="text-sm font-bold text-gray-500 tracking-wide">Attach Audio <span class="mt-2 text-sm text-gray-400 font-italic">(accepts WAV, MP3)</span></label>
                             <div id="audio" class="flex items-center justify-center w-full">
@@ -105,6 +107,15 @@
                               <textarea id="xscript" rows="10" class="block p-2.5 w-full text-sm text-gray-900 bg-gray-50 rounded-lg border border-gray-300 focus:ring-blue-500 focus:border-blue-500 dark:bg-gray-700 dark:border-gray-600 dark:placeholder-gray-400 dark:text-white dark:focus:ring-blue-500 dark:focus:border-blue-500" placeholder="Once upon a time...">
                               </textarea>
                             </div>
+                            <!--
+                            <div class="flex items-center justify-center w-full">
+                              <label for="bgtemplate">Background Template</label>
+                              <select id="bgtemplate" name="bgtemplate" id="bgtemplate">
+                                <option value="plain">Plain Background</option>
+                                <option value="musical-night">Musical Night</option>
+                              </select>
+                            </div>
+                            -->
                           </div>
                           <div>
                             <div id="script-submit" class="my-5 w-full flex justify-center bg-blue-500 text-gray-100 p-4 rounded-full tracking-wide font-semibold  focus:outline-none focus:shadow-outline hover:bg-blue-600 shadow-lg cursor-pointer transition ease-in duration-300">Luminate</div>
@@ -126,12 +137,12 @@
                         </div>
 
                         <div class="flex items-center justify-between">
-                          <button class="inline-flex items-center px-6 py-2 text-sm text-gray-800 rounded-lg shadow outline-none gap-x-1 hover:bg-gray-100">
+                          <button id="form-back" class="inline-flex items-center px-6 py-2 text-sm text-gray-800 rounded-lg shadow outline-none gap-x-1 hover:bg-gray-100">
                             <svg xmlns="http://www.w3.org/2000/svg" class="w-4 h-4" fill="none" viewBox="0 0 24 24" stroke="currentColor">
                               <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M10 19l-7-7m0 0l7-7m-7 7h18"/>
                             </svg>Back
                           </button>
-                          <button class="px-6 py-2 text-sm text-white bg-indigo-500 rounded-lg outline-none hover:bg-indigo-600 ring-indigo-300">Next</button>
+                          <button id="form-next" class="px-6 py-2 text-sm text-white bg-indigo-500 rounded-lg outline-none hover:bg-indigo-600 ring-indigo-300">Next</button>
                         </div>
                       </div>
                       <!-- form - end -->
@@ -150,10 +161,32 @@
           position: absolute;
           clip: rect(10px, 150px, 130px, 10px);
         }
+         select {
+          margin-bottom: 10px;
+          margin-top: 10px;
+          font-family: cursive, sans-serif;
+          outline: 0;
+          background: #2ecc71;
+          color: #fff;
+          border: 1px solid crimson;
+          padding: 4px;
+          border-radius: 9px;
+        }
       </style>
       <script type="text/javascript">
+let currentFormIndex = 1;
 let audioFile = "";
 let audioID = "";
+
+const form1 = document.querySelector("#form-1");
+const form2 = document.querySelector("#form-2");
+const form3 = document.querySelector("#form-3");
+const form1Head = document.querySelector("#form-1-head");
+const form2Head = document.querySelector("#form-2-head");
+const form3Head = document.querySelector("#form-3-head");
+const formBack = document.querySelector("#form-back");
+const formNext = document.querySelector("#form-next");
+
 const audioSubmit = document.querySelector("#audio-submit");
 const audioInput = document.querySelector("#audio-input");
 const audioInputMsg = document.querySelector("#audio-input-msg");
@@ -170,6 +203,38 @@ const setAudioID = (audio_id) => {
   }
   audioID = audio_id;
 };
+
+const showForm1Head = () => { form1Head.style.fontWeight = "bold"; };
+const hideForm1Head = () => { form1Head.style.fontWeight = "normal"; };
+const showForm2Head = () => { form2Head.style.fontWeight = "bold"; };
+const hideForm2Head = () => { form2Head.style.fontWeight = "normal"; };
+const showForm3Head = () => { form3Head.style.fontWeight = "bold"; };
+const hideForm3Head = () => { form3Head.style.fontWeight = "normal"; };
+const showForm1 = () => { form1.style.display = "block"; showForm1Head(); };
+const hideForm1 = () => { form1.style.display = "none"; hideForm1Head(); };
+const showForm2 = () => { form2.style.display = "block"; showForm2Head(); };
+const hideForm2 = () => { form2.style.display = "none"; hideForm2Head(); };
+const showForm3 = () => { form3.style.display = "block"; showForm3Head(); };
+const hideForm3 = () => { form3.style.display = "none"; hideForm3Head(); };
+
+const setCurrentFormIndex = (idx) => {
+  currentFormIndex = idx;
+  if (currentFormIndex == 1) {
+    showForm1();
+    hideForm2();
+    hideForm3();
+  } else if (currentFormIndex == 2) {
+    showForm2();
+    hideForm3();
+    hideForm1();
+  } else if (currentFormIndex == 3) {
+    showForm3();
+    hideForm1();
+    hideForm2();
+  }
+};
+
+setCurrentFormIndex(1);
 
 const transcribeAudio = (audio_id) => {
   console.log("Transcribe audio...");
@@ -199,6 +264,8 @@ const uploadFile = file => {
       console.log(result.audio_id)
       setAudioID(result.audio_id);
       transcribeAudio(result.audio_id)
+      hideForm1();
+      showForm2();
     } else {
       console.log(request.responseText);
     }
@@ -230,7 +297,10 @@ const updateScript = (audio_id, transcript) => {
 
 const generateVideo = audio_id => {
   luminousState.innerHTML = 'Generating your Luminous Decibels.<br/>This takes some time with our current server power.'
-  const API_ENDPOINT = "/api/video/" + audio_id + '?' + new URLSearchParams({recreate: true});
+  const API_ENDPOINT = "/api/video/" + audio_id + '?' + new URLSearchParams({
+    //bgimage: document.querySelector("#bgtemplate").value
+    recreate: true
+  });
   fetch(API_ENDPOINT, {
     method: 'POST',
     cache: 'no-cache',
@@ -246,6 +316,8 @@ const generateVideo = audio_id => {
                                    '<source id="luminous-source" src="' + data.video_link + '" type="video/mp4">' +
                                  '<p>Video tag not supported.</p></video>';
       luminousState.innerHTML = 'Ready to play or download!'
+      hideForm2();
+      showForm3();
   })
   .catch((err) => {
     console.error(err);
@@ -268,6 +340,26 @@ audioSubmit.addEventListener("click", event => {
 scriptSubmit.addEventListener("click", event => {
   updateScript(audioID, transcriptionTextArea.value);
   generateVideo(audioID);
+});
+
+formBack.addEventListener("click", event => {
+  if (currentFormIndex == 1) {
+    setCurrentFormIndex(3)
+  } else if (currentFormIndex == 2) {
+    setCurrentFormIndex(1)
+  } else if (currentFormIndex == 3) {
+    setCurrentFormIndex(2)
+  }
+});
+
+formNext.addEventListener("click", event => {
+  if (currentFormIndex == 1) {
+    setCurrentFormIndex(2)
+  } else if (currentFormIndex == 2) {
+    setCurrentFormIndex(3)
+  } else if (currentFormIndex == 3) {
+    setCurrentFormIndex(1)
+  }
 });
       </script>
     </div>
