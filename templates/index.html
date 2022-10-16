@@ -107,15 +107,16 @@
                               <textarea id="xscript" rows="10" class="block p-2.5 w-full text-sm text-gray-900 bg-gray-50 rounded-lg border border-gray-300 focus:ring-blue-500 focus:border-blue-500 dark:bg-gray-700 dark:border-gray-600 dark:placeholder-gray-400 dark:text-white dark:focus:ring-blue-500 dark:focus:border-blue-500" placeholder="Once upon a time...">
                               </textarea>
                             </div>
-                            <!--
+                            <!-- ABK:bgimage:start -->
                             <div class="flex items-center justify-center w-full">
-                              <label for="bgtemplate">Background Template</label>
+                              <label class="text-sm px-4 py-2 font-bold text-gray-500 tracking-wide" for="bgtemplate">Template</label>
                               <select id="bgtemplate" name="bgtemplate" id="bgtemplate">
                                 <option value="plain">Plain Background</option>
                                 <option value="musical-night">Musical Night</option>
+                                <option value="boat-mountain">Boat to Mountain</option>
                               </select>
                             </div>
-                            -->
+                            <!-- ABK:bgimage:end -->
                           </div>
                           <div>
                             <div id="script-submit" class="my-5 w-full flex justify-center bg-blue-500 text-gray-100 p-4 rounded-full tracking-wide font-semibold  focus:outline-none focus:shadow-outline hover:bg-blue-600 shadow-lg cursor-pointer transition ease-in duration-300">Luminate</div>
@@ -166,11 +167,16 @@
           margin-top: 10px;
           font-family: cursive, sans-serif;
           outline: 0;
-          background: #2ecc71;
-          color: #fff;
-          border: 1px solid crimson;
+          background: #abeaff;
+          color: #285361;
+          border: 1px solid #285361;
           padding: 4px;
           border-radius: 9px;
+        }
+         option {
+          font-family: cursive, sans-serif;
+          background: #abeaff;
+          color: #285361;
         }
       </style>
       <script type="text/javascript">
@@ -243,7 +249,7 @@ const transcribeAudio = (audio_id) => {
   .then((response) => response.json())
   .then((data) => {
       console.log(data);
-      const result = data.text;
+      const result = typeof data.text === 'string' ? data.text : data.text.join("");
       console.log(result);
       transcriptionTextArea.value = result;
   })
@@ -298,9 +304,12 @@ const updateScript = (audio_id, transcript) => {
 const generateVideo = audio_id => {
   luminousState.innerHTML = 'Generating your Luminous Decibels.<br/>This takes some time with our current server power.'
   const API_ENDPOINT = "/api/video/" + audio_id + '?' + new URLSearchParams({
-    //bgimage: document.querySelector("#bgtemplate").value
+    bgimage: document.querySelector("#bgtemplate").value,
     recreate: true
   });
+  hideForm2();
+  showForm3();
+
   fetch(API_ENDPOINT, {
     method: 'POST',
     cache: 'no-cache',
@@ -316,8 +325,6 @@ const generateVideo = audio_id => {
                                    '<source id="luminous-source" src="' + data.video_link + '" type="video/mp4">' +
                                  '<p>Video tag not supported.</p></video>';
       luminousState.innerHTML = 'Ready to play or download!'
-      hideForm2();
-      showForm3();
   })
   .catch((err) => {
     console.error(err);

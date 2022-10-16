@@ -159,7 +159,6 @@ def do_generate_frames(framedata_file, frames_dir, frame_specs):
             subindex = save_image_times(canvas, frame_index, int(frames_count/4), subindex)
 
 
-    @functools.lru_cache(maxsize=128)
     def base_image(bgimage_path):
         try:
             bgimage = Image.open(bgimage_path)
@@ -311,6 +310,10 @@ def generate_frames(framedata_file, frames_dir, lvg_dirs, frame_specs=DEFAULT_FR
     if 'fps' not in frame_specs.keys():
         frame_specs['fps'] = DEFAULT_FRAMES_PER_SECOND
     if 'base_image_file' not in frame_specs.keys():
-        frame_specs['base_image_file'] = os.path.join(lvg_dirs['bgimages_dir'], BGIMAGE_NAME)
+        if 'bgimage_id' in frame_specs.keys():
+            bgimage_name = frame_specs['bgimage_id'] + '.jpg'
+            frame_specs['base_image_file'] = os.path.join(lvg_dirs['bgimages_dir'], bgimage_name)
+        else:
+            frame_specs['base_image_file'] = os.path.join(lvg_dirs['bgimages_dir'], BGIMAGE_NAME)
     do_generate_frames(framedata_file, frames_dir, frame_specs)
     return frame_specs

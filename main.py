@@ -211,9 +211,12 @@ class APIVideoResource:
 
     async def on_post(self, req, resp, audio_id):
         recreate = False
+        bgimage_id = 'plain'
         for key, value in req.params.items():
             if key == 'recreate':
                 recreate = value
+            if key == 'bgimage':
+                bgimage_id = value
         description = "Generate lyrical video from transcript & attached audio."
         my_video_file = os.path.join(VIDEO_PATH, audio_id)
         my_video_file = os.path.splitext(my_video_file)[0] + ".mp4"
@@ -223,7 +226,7 @@ class APIVideoResource:
 
             my_frames_dir = os.path.join(FRAMES_PATH, audio_id)
             lvg_dirs = {'fonts_dir': FONTS_PATH, 'bgimages_dir': BGIMAGES_DIR}
-            frame_specs = {'width': 1080, 'height': 1920}
+            frame_specs = {'width': 1080, 'height': 1920, 'bgimage_id': bgimage_id}
             frame_specs = pylude.generate_frames(framedata_file, my_frames_dir, lvg_dirs, frame_specs)
 
             video_fps = frame_specs['fps']
