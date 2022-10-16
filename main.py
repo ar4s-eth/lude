@@ -226,7 +226,12 @@ class APIVideoResource:
 
             my_frames_dir = os.path.join(FRAMES_PATH, audio_id)
             lvg_dirs = {'fonts_dir': FONTS_PATH, 'bgimages_dir': BGIMAGES_DIR}
-            frame_specs = {'width': 1080, 'height': 1920, 'bgimage_id': bgimage_id}
+            frame_specs = {
+                'width': 1080,
+                'height': 1920,
+                'font_height': 150,
+                'bgimage_id': bgimage_id
+            };
             frame_specs = pylude.generate_frames(framedata_file, my_frames_dir, lvg_dirs, frame_specs)
 
             video_fps = frame_specs['fps']

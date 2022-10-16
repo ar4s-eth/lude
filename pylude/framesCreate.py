@@ -281,7 +281,6 @@ DEFAULT_FRAME_SPECS = {
     'default_line_gap': 10,
     'max_lines_per_frame': 5,
 
-    #'font_path': DEFAULT_FONT_PATH,
     'font_height': 50,
 
     'bgcolor': (236, 128, 16), # dull orange
