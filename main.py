@@ -230,6 +230,11 @@ class APIVideoResource:
                 'width': 1080,
                 'height': 1920,
                 'font_height': 150,
+                'margin_left_right': 15,
+                'bgcolor': (227, 247, 255),
+                'textcolor': (0, 160, 224),
+                'textcolor_current': (68, 167, 207),
+                'textcolor_next': (169, 228, 252),
                 'bgimage_id': bgimage_id
             };
             frame_specs = pylude.generate_frames(framedata_file, my_frames_dir, lvg_dirs, frame_specs)

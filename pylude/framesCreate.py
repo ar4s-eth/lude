@@ -211,9 +211,11 @@ def do_generate_frames(framedata_file, frames_dir, frame_specs):
         return math.floor(usable_frame_space / width_of_one_char)
 
     def framedata_to_frames(frame_data_file):
-        default_font = ImageFont.truetype(FRAME_SPECS['font_path'], 73, encoding="unic")
+        font_height = FRAME_SPECS['font_height']
+        #ABK default_font = ImageFont.truetype(FRAME_SPECS['font_path'], 73, encoding="unic")
+        default_font = ImageFont.truetype(FRAME_SPECS['font_path'], font_height, encoding="unic")
         allowed_characters_in_a_line = count_allowed_characters_in_a_line(default_font)
-        _, FRAME_SPECS['font_height'] = default_font.getsize("Trying to keep ^~*,| better height")
+        #ABK _, FRAME_SPECS['font_height'] = default_font.getsize("Trying to keep ^~*,| better height")
 
         os.makedirs(FRAMES_DIR, exist_ok=True)
         with open(frame_data_file) as csv_file:
