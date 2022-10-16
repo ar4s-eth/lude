@@ -331,6 +331,7 @@ extra_handlers = {
 
 app = falcon.asgi.App()
 app.req_options.media_handlers.update(extra_handlers)
+app.add_static_route('/pages', STATIC_PATH)
 app.add_static_route('/img', IMAGE_PATH)
 app.add_static_route('/video', VIDEO_PATH)
 app.add_route('/{locale}/main', mainHandler)
