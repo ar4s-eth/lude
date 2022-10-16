@@ -11,5 +11,9 @@ temp/*
 *.cfg
 *.lock
 *.sock
-__pycache__/**
-media/audio/*.*
+**/__pycache__/**
+media/audio/**
+media/framedata/**
+media/frames/**
+media/text/**
+media/video/**

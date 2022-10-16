@@ -1,5 +1,6 @@
 import falcon
 import falcon.asgi
+from falcon import media
 import jinja2
 import json
 import datetime
@@ -11,6 +12,8 @@ import logging
 
 import whisper
 
+import pylude  ## local relative import
+print("pyLuDe activated version: %s" % pylude.__VERSION__)
 
 ##### Globals
 STATIC_PATH = os.path.join(os.getcwd(), 'static')
@@ -19,7 +22,10 @@ IMAGE_PATH  = os.path.join(STATIC_PATH, 'img')
 MEDIA_PATH = os.path.join(os.getcwd(), 'media')
 AUDIO_PATH = os.path.join(MEDIA_PATH, 'audio')
 TEXT_PATH = os.path.join(MEDIA_PATH, 'text')
+FRAMEDATA_PATH = os.path.join(MEDIA_PATH, 'framedata')
+FRAMES_PATH = os.path.join(MEDIA_PATH, 'frames')
 VIDEO_PATH = os.path.join(MEDIA_PATH, 'video')
+FONTS_PATH = os.path.join(MEDIA_PATH, 'fonts')
 
 DEFAULT_LOCALE = 'en'
 LOCALE_DIR = 'locales'
@@ -50,6 +56,11 @@ def load_whisper_model():
     return model
 
 def transcribe(audio_id):
+    filepath = os.path.join(TEXT_PATH, f'{audio_id}')
+    if os.path.isfile(filepath):
+        print("%s transcription exists, returning that" % filepath)
+        with open(filepath, 'r') as fp:
+            return fp.readlines()
     model = WHISPER_MODEL
     audio_file = os.path.join(AUDIO_PATH, audio_id)
     audio = whisper.load_audio(audio_file)
@@ -65,6 +76,8 @@ def transcribe(audio_id):
     # decode the audio
     options = whisper.DecodingOptions(fp16=False)
     result = whisper.decode(model, mel, options)
+    with open(filepath, 'w') as fp:
+        fp.write(result.text)
     return result.text
 
 
@@ -142,6 +155,14 @@ async def upload_audio(req, name, audio_id):
     return audio_id
 
 
+async def update_transcript(req, audio_id):
+    transcript = await req.get_media()
+    script_filepath = os.path.join(TEXT_PATH, audio_id)
+    with open(script_filepath, 'w') as fp:
+        fp.write(transcript)
+    return script_filepath
+
+
 class APITranscribeResource:
     async def on_get(self, req, resp, audio_id):
         try:
@@ -157,6 +178,45 @@ class APITranscribeResource:
         resp.content_type = 'application/json'
         resp.text = json.dumps({'success': True, 'text': transcription})
         return
+
+    async def on_post(self, req, resp, audio_id):
+        try:
+            await update_transcript(req, audio_id)
+        except Exception as e:
+            print(e)
+            raise falcon.HTTPInternalServerError(
+              success=False,
+              error="Failed to generate video",
+              description="An issue occurred while generating the video."
+            )
+        resp.status = falcon.HTTP_200
+        resp.content_type = 'application/json'
+        resp.text = json.dumps({'success': True, 'task': 'script updated'})
+
+
+class APIVideoResource:
+    async def on_get(self, req, resp):
+        resp.status = falcon.HTTP_400
+        resp.content_type = 'application/json'
+        resp.text = json.dumps({'error': "unavailable"})
+        return
+
+    async def on_post(self, req, resp, audio_id):
+        try:
+            script_filepath = os.path.join(TEXT_PATH, audio_id)
+            framedata_file = pylude.generate_framedata(script_filepath, FRAMEDATA_PATH)
+            my_frames_dir = os.path.join(FRAMES_PATH, audio_id)
+            pylude.generate_frames(framedata_file, my_frames_dir, FONTS_PATH)
+        except Exception as e:
+            print(e)
+            raise falcon.HTTPInternalServerError(
+              success=False,
+              error="Failed to generate video",
+              description="An issue occurred while generating the video."
+            )
+        resp.status = falcon.HTTP_200
+        resp.content_type = 'application/json'
+        resp.text = json.dumps({'success': True, 'video_link': 'WIP'})
 
 
 class APIAudioResource:
@@ -187,6 +247,14 @@ class RedirectResource:
         raise falcon.HTTPFound(req.prefix + '/en/main')
 
 
+class PlainTextHandler(media.BaseHandler):
+    def serialize(self, media, content_type):
+        return str(media).encode()
+
+    def deserialize(self, stream, content_type, content_length):
+        return stream.read().decode()
+
+
 #### __main__
 
 logging.basicConfig(
@@ -197,12 +265,19 @@ WHISPER_MODEL = load_whisper_model()
 
 mainHandler = MainResource()
 apiAudioHandler = APIAudioResource()
+apiVideoHandler = APIVideoResource()
 apiTranscribeHandler = APITranscribeResource()
 redirect = RedirectResource()
 
+extra_handlers = {
+    'text/plain': PlainTextHandler(),
+}
+
 app = falcon.asgi.App()
+app.req_options.media_handlers.update(extra_handlers)
 app.add_static_route('/img', IMAGE_PATH)
 app.add_route('/{locale}/main', mainHandler)
 app.add_route('/api/audio', apiAudioHandler)
 app.add_route('/api/transcribe/{audio_id}', apiTranscribeHandler)
+app.add_route('/api/video/{audio_id}', apiVideoHandler)
 app.add_route('/', redirect)

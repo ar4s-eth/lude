@@ -107,7 +107,7 @@
                             </div>
                           </div>
                           <div>
-                            <div type="submit" class="my-5 w-full flex justify-center bg-blue-500 text-gray-100 p-4 rounded-full tracking-wide font-semibold  focus:outline-none focus:shadow-outline hover:bg-blue-600 shadow-lg cursor-pointer transition ease-in duration-300">Luminate</div>
+                            <div id="script-submit" class="my-5 w-full flex justify-center bg-blue-500 text-gray-100 p-4 rounded-full tracking-wide font-semibold  focus:outline-none focus:shadow-outline hover:bg-blue-600 shadow-lg cursor-pointer transition ease-in duration-300">Luminate</div>
                           </div>
                         </div>
 
@@ -156,10 +156,20 @@
       </style>
       <script type="text/javascript">
 let audioFile = "";
+let audioID = "";
 const audioSubmit = document.querySelector("#audio-submit");
 const audioInput = document.querySelector("#audio-input");
 const audioInputMsg = document.querySelector("#audio-input-msg");
+const scriptSubmit = document.querySelector("#script-submit");
 const transcriptionTextArea = document.querySelector("#xscript");
+
+const setAudioID = (audio_id) => {
+  if (audioID != "" && audioID != audio_id) {
+    console.error("trying to reset Audio ID");
+    return;
+  }
+  audioID = audio_id;
+};
 
 const transcribeAudio = (audio_id) => {
   console.log("Transcribe audio...");
@@ -173,7 +183,7 @@ const transcribeAudio = (audio_id) => {
       transcriptionTextArea.value = result;
   })
   .catch(console.error);
-}
+};
 
 const uploadFile = file => {
   console.log("Uploading file...");
@@ -187,6 +197,7 @@ const uploadFile = file => {
       console.log(request.responseText);
       const result = JSON.parse(request.responseText)
       console.log(result.audio_id)
+      setAudioID(result.audio_id);
       transcribeAudio(result.audio_id)
     } else {
       console.log(request.responseText);
@@ -194,6 +205,43 @@ const uploadFile = file => {
   };
   formData.append("file", file);
   request.send(formData);
+};
+
+const updateScript = (audio_id, transcript) => {
+  const API_ENDPOINT = "/api/transcribe/" + audio_id ;
+  fetch(API_ENDPOINT, {
+    method: 'POST',
+    cache: 'no-cache',
+    credentials: 'same-origin',
+    headers: {
+      'Content-Length': transcript.length,
+      'Content-Type': 'text/plain'
+    },
+    redirect: 'follow',
+    referrerPolicy: 'no-referrer',
+    body: transcript
+  })
+  .then((response) => response.json())
+  .then((data) => {
+      console.log(data);
+  })
+  .catch(console.error);
+};
+
+const generateVideo = audio_id => {
+  const API_ENDPOINT = "/api/video/" + audio_id ;
+  fetch(API_ENDPOINT, {
+    method: 'POST',
+    cache: 'no-cache',
+    credentials: 'same-origin',
+    redirect: 'follow',
+    referrerPolicy: 'no-referrer'
+  })
+  .then((response) => response.json())
+  .then((data) => {
+      console.log(data);
+  })
+  .catch(console.error);
 };
 
 audioInput.addEventListener("change", event => {
@@ -206,6 +254,11 @@ audioInput.addEventListener("change", event => {
 
 audioSubmit.addEventListener("click", event => {
   uploadFile(audioFile);
+});
+
+scriptSubmit.addEventListener("click", event => {
+  updateScript(audioID, transcriptionTextArea.value);
+  generateVideo(audioID);
 });
       </script> 
     </div>
