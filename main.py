@@ -29,6 +29,7 @@ FRAMEDATA_PATH = os.path.join(MEDIA_PATH, 'framedata')
 FRAMES_PATH = os.path.join(MEDIA_PATH, 'frames')
 VIDEO_PATH = os.path.join(MEDIA_PATH, 'video')
 FONTS_PATH = os.path.join(MEDIA_PATH, 'fonts')
+BGIMAGES_DIR = os.path.join(MEDIA_PATH, 'bgimages')
 
 DEFAULT_LOCALE = 'en'
 LOCALE_DIR = 'locales'
@@ -221,8 +222,9 @@ class APIVideoResource:
             framedata_file = pylude.generate_framedata(script_filepath, FRAMEDATA_PATH)
 
             my_frames_dir = os.path.join(FRAMES_PATH, audio_id)
+            lvg_dirs = {'fonts_dir': FONTS_PATH, 'bgimages_dir': BGIMAGES_DIR}
             frame_specs = {'width': 1080, 'height': 1920}
-            frame_specs = pylude.generate_frames(framedata_file, my_frames_dir, FONTS_PATH, frame_specs)
+            frame_specs = pylude.generate_frames(framedata_file, my_frames_dir, lvg_dirs, frame_specs)
 
             video_fps = frame_specs['fps']
             vdo_tmp = os.path.join(TEMP_PATH, audio_id)

@@ -159,6 +159,7 @@ def do_generate_frames(framedata_file, frames_dir, frame_specs):
             subindex = save_image_times(canvas, frame_index, int(frames_count/4), subindex)
 
 
+    @functools.lru_cache(maxsize=128)
     def base_image(bgimage_path):
         try:
             bgimage = Image.open(bgimage_path)
@@ -271,7 +272,7 @@ DEFAULT_FONTS = {
     'playfairdisplay': 'PlayfairDisplay-Regular.otf',
 }
 
-DEFAULT_FONT_FILE = DEFAULT_FONTS['caviardreams']
+DEFAULT_FONT_FILE = DEFAULT_FONTS['caviardreams-bi']
 
 DEFAULT_FRAME_SPECS = {
     'width': 1024,
@@ -297,15 +298,11 @@ DEFAULT_FRAME_SPECS = {
 
 DEFAULT_FRAMES_PER_SECOND = 24  ## common across scripts
 
-LVG_DATA_DIR = 'lvg-data'
-FRAMES_DIR = os.path.join(LVG_DATA_DIR, 'frames')
-FRAMEDATA_FILE = os.path.join(LVG_DATA_DIR, 'transcript.txt.lvg')
-
-DEFAULT_BASE_IMAGE_PATH = base_image_path(os.path.join(LVG_DATA_DIR, 'bgimages'),)
+BGIMAGE_NAME = 'plain' #'musical-night.jpg'
 
 
-def generate_frames(framedata_file, frames_dir, fonts_dir, frame_specs=DEFAULT_FRAME_SPECS):
-    DEFAULT_FONT_PATH = os.path.join(fonts_dir, DEFAULT_FONT_FILE)
+def generate_frames(framedata_file, frames_dir, lvg_dirs, frame_specs=DEFAULT_FRAME_SPECS):
+    DEFAULT_FONT_PATH = os.path.join(lvg_dirs['fonts_dir'], DEFAULT_FONT_FILE)
     for default_key, default_val in DEFAULT_FRAME_SPECS.items():
         if default_key not in frame_specs.keys():
             frame_specs[default_key] = default_val
@@ -314,6 +311,6 @@ def generate_frames(framedata_file, frames_dir, fonts_dir, frame_specs=DEFAULT_F
     if 'fps' not in frame_specs.keys():
         frame_specs['fps'] = DEFAULT_FRAMES_PER_SECOND
     if 'base_image_file' not in frame_specs.keys():
-        frame_specs['base_image_file'] = DEFAULT_BASE_IMAGE_PATH
+        frame_specs['base_image_file'] = os.path.join(lvg_dirs['bgimages_dir'], BGIMAGE_NAME)
     do_generate_frames(framedata_file, frames_dir, frame_specs)
     return frame_specs
